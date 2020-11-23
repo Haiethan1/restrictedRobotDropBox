@@ -17,13 +17,15 @@ sos_service = rospy.ServiceProxy('/box', Trigger)
 
 sos = TriggerRequest()
 
+while True:
 
-tick = t.time()
-result = sos_service(sos) 
-tock = t.time()
+    tick = t.time()
+    result = sos_service(sos) 
+    tock = t.time() 
 
 
-print (tock - tick)
+    print (tock - tick)
+    t.sleep(0.02)
 
 
 print result

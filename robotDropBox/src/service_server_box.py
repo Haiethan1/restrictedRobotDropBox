@@ -5,7 +5,7 @@ from std_srvs.srv import Trigger, TriggerResponse
 import os
 import time as t
 from gazebo_msgs.srv import GetModelState, GetModelStateRequest
-import numpy
+import numpy as np
 
 
 
@@ -25,8 +25,9 @@ def trigger_response(request):
 
     b = getBoxLocation(x, y) 
     if(b != None):
-        dropBox(b[0], b[1])
-        dropBoxBool = True
+        if (not checkBoxLocation(b[0], b[1])):
+            dropBox(b[0], b[1])
+            dropBoxBool = True
 
     return TriggerResponse(
         success=dropBoxBool,
@@ -34,8 +35,42 @@ def trigger_response(request):
     )
 
 
+def delBox(numBox):
+    buff = "rosservice call gazebo/delete_model " + name + str(numBox)
+    os.system(buff)
+
+
+def delBoxAll(numBox):
+    for i in range(numBox):
+        delBox(i)
+        t.sleep(0.1)
+
+box_x = []
+box_y = []
+
+def saveBoxVal(x,y):
+    global box_x, box_y
+    box_x.append(x)
+    box_y.append(y)
+    return
+
+
+def checkBoxLocation(x, y):
+    global box_x, box_y
+    for i in range(len(box_x)):
+        xx = box_x[i]
+        yy = box_y[i]
+        d = np.sqrt((xx-x)*(xx-x) + (yy-y)*(yy-y))
+        if d < 0.75:
+            return True # return true if within 0.5m
+    return False
+
 
 def dropBox(x, y):
+    global box_i
+
+    saveBoxVal(x, y)
+
     b0 = "./load_box.sh "
     b1 = name + str(box_i) + " "
     box_i += 1
@@ -55,36 +90,43 @@ def getBoxLocation(x , y):
     # determine if it is inside of the 50m - 2m circle (for our proj, square)
     x0 = 0.0
     y0 = 0.0
-    dist = ((x-x0)^2 + (y-y0)^2)^0.5
+    dist = np.sqrt((x-x0)*(x-x0) + (y-y0)*(y-y0))
     
     if (dist < 48):
         return None
     else:
-        return #position
+        theta = np.arctan2(x,y)
+        R = 50.0
+        xn = np.cos(theta)*R
+        yn = np.sin(theta)*R
+        return (xn,yn)
 
     return
 
 
 
 def getRobotLocation():
+    global robot_proxy
     a = GetModelStateRequest(model_name = 'dd_robot')
-    
+    a.model_name = "dd_robot"
     s = robot_proxy(a)
-
-    print s
 
     x = s.pose.position.x
     y = s.pose.position.y
 
+
+    print "x = " + str(x) + "y = " + str(y)
     return (x, y)
 
 
 
 rospy.init_node('service_example')
 my_service = rospy.Service(
-    '/service_example_topic', Trigger, trigger_response
+    '/box', Trigger, trigger_response
 )
 
+
+rospy.wait_for_service('/gazebo/get_model_state')
 robot_proxy = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
 
 
