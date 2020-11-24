@@ -61,7 +61,7 @@ def checkBoxLocation(x, y):
         xx = box_x[i]
         yy = box_y[i]
         d = np.sqrt((xx-x)*(xx-x) + (yy-y)*(yy-y))
-        if d < 0.75:
+        if d < 1:
             return True # return true if within 0.5m
     return False
 
@@ -75,8 +75,8 @@ def dropBox(x, y):
     b1 = name + str(box_i) + " "
     box_i += 1
 
-    b2 = str(x) + " "
-    b3 = str(y) + " "
+    b2 = str(y) + " "
+    b3 = str(x) + " "
     b4 = "&"
 
     buff = b0 + b1 + b2 + b3 + b4
@@ -88,18 +88,34 @@ def getBoxLocation(x , y):
     
     # math for circle
     # determine if it is inside of the 50m - 2m circle (for our proj, square)
-    x0 = 0.0
-    y0 = 0.0
-    dist = np.sqrt((x-x0)*(x-x0) + (y-y0)*(y-y0))
-    
-    if (dist < 48):
-        return None
+    x0 = abs(x)
+    y0 = abs(y)
+    if (x0 > 48 or y0 > 48):
+        if(x0 > 48 and y0 > 48):
+            if(x > 48):
+                xVal = 50
+            else:
+                xVal = -50
+            if(y > 48):
+                yVal = 50
+            else:
+                yVal = -50
+            print("xVal = " + str(xVal) + " yVal = " + str(yVal))
+            return (xVal, yVal)
+        elif(x0 > 48):
+            if(x > 48):
+                xVal = 50
+            else:
+                xVal = -50
+            return (xVal, y)
+        else:
+            if(y > 48):
+                yVal = 50
+            else:
+                yVal = -50
+            return (x, yVal)
     else:
-        theta = np.arctan2(x,y)
-        R = 50.0
-        xn = np.cos(theta)*R
-        yn = np.sin(theta)*R
-        return (xn,yn)
+        return None
 
     return
 
