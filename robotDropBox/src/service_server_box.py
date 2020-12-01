@@ -28,6 +28,7 @@ def trigger_response(request):
         if (not checkBoxLocation(b[0], b[1])):
             dropBox(b[0], b[1])
             dropBoxBool = True
+            print ("Box x val = " + str(b[0]) + " Box y val = " + str(b[1]))
 
     return TriggerResponse(
         success=dropBoxBool,
@@ -95,24 +96,24 @@ def getBoxLocation(x , y):
             if(x > 23):
                 xVal = 25
             else:
-                xVal = -25
+                xVal = -28
             if(y > 23):
                 yVal = 25
             else:
-                yVal = -25
+                yVal = -28
             print("xVal = " + str(xVal) + " yVal = " + str(yVal))
             return (xVal, yVal)
         elif(x0 > 23):
             if(x > 23):
                 xVal = 25
             else:
-                xVal = -25
+                xVal = -28
             return (xVal, y)
         else:
             if(y > 23):
                 yVal = 25
             else:
-                yVal = -25
+                yVal = -28
             return (x, yVal)
     else:
         return None
