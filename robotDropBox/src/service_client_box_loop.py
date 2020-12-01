@@ -24,7 +24,7 @@ while True:
     tock = t.time() 
 
 
-    print (tock - tick)
+    #print (tock - tick)
     t.sleep(0.02)
 
 

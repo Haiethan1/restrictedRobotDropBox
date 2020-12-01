@@ -90,29 +90,29 @@ def getBoxLocation(x , y):
     # determine if it is inside of the 50m - 2m circle (for our proj, square)
     x0 = abs(x)
     y0 = abs(y)
-    if (x0 > 48 or y0 > 48):
-        if(x0 > 48 and y0 > 48):
-            if(x > 48):
-                xVal = 50
+    if (x0 > 23 or y0 > 23):
+        if(x0 > 23 and y0 > 23):
+            if(x > 23):
+                xVal = 25
             else:
-                xVal = -50
-            if(y > 48):
-                yVal = 50
+                xVal = -25
+            if(y > 23):
+                yVal = 25
             else:
-                yVal = -50
+                yVal = -25
             print("xVal = " + str(xVal) + " yVal = " + str(yVal))
             return (xVal, yVal)
-        elif(x0 > 48):
-            if(x > 48):
-                xVal = 50
+        elif(x0 > 23):
+            if(x > 23):
+                xVal = 25
             else:
-                xVal = -50
+                xVal = -25
             return (xVal, y)
         else:
-            if(y > 48):
-                yVal = 50
+            if(y > 23):
+                yVal = 25
             else:
-                yVal = -50
+                yVal = -25
             return (x, yVal)
     else:
         return None
